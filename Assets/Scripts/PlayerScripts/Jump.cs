@@ -15,17 +15,21 @@ namespace DarcellesUndercroft
         [SerializeField] protected float maxJumpSpeed;
         [SerializeField] protected float maxFallSpeed;
         [SerializeField] protected float acceptedFallSpeed;
+        [SerializeField] protected float glideTime;
+        [SerializeField] [Range(-2, 2)] protected float gravity;
         [SerializeField] protected LayerMask collisionLayer;
 
         private bool isJumping;
         private float jumpCountDown;
         private int numJumpsLeft;
+        private float fallCountDown;
 
         protected override void Initialisation()
         {
             base.Initialisation();
             numJumpsLeft = maxJumps;
             jumpCountDown = buttonHoldTime;
+            fallCountDown = glideTime;
         }
 
         // Update is called once per frame
@@ -56,8 +60,10 @@ namespace DarcellesUndercroft
 
                 if (numJumpsLeft >= 0)
                 {
+                    rb.velocity = new Vector2(rb.velocity.x, 0);
                     jumpCountDown = buttonHoldTime;
                     isJumping = true;
+                    fallCountDown = glideTime;
                 }
 
                 return true;
@@ -83,6 +89,7 @@ namespace DarcellesUndercroft
         protected virtual void FixedUpdate()
         {
             IsJumping();
+            Gliding();
             GroundCheck();
         }
 
@@ -90,7 +97,6 @@ namespace DarcellesUndercroft
         {
             if (isJumping)
             {
-                rb.velocity = new Vector2(rb.velocity.x, 0);
                 rb.AddForce(Vector2.up * jumpForce);
                 AdditionalAir();
             }
@@ -99,6 +105,23 @@ namespace DarcellesUndercroft
             {
                 rb.velocity = new Vector2(rb.velocity.x, maxJumpSpeed);
             }
+        }
+
+        protected virtual void Gliding()
+        {
+            if (Falling(0) && JumpHeld())
+            {
+                fallCountDown -= Time.deltaTime;
+
+                if (fallCountDown > 0 && rb.velocity.y > acceptedFallSpeed)
+                {
+                    anim.SetBool("Gliding", true);
+                    FallSpeed(gravity);
+                    return;
+                }
+            }
+
+            anim.SetBool("Gliding", false);
         }
 
         protected virtual void AdditionalAir()
@@ -127,17 +150,22 @@ namespace DarcellesUndercroft
         {
             if (CollisionCheck(Vector2.down, distanceToCollider, collisionLayer) && !isJumping)
             {
+                anim.SetBool("Grounded", true);
                 character.IsGrounded = true;
                 numJumpsLeft = maxJumps;
+                fallCountDown = glideTime;
             }
             else
             {
+                anim.SetBool("Grounded", false);
                 character.IsGrounded = false;
                 if (Falling(0) && rb.velocity.y < maxFallSpeed)
                 {
                     rb.velocity = new Vector2(rb.velocity.x, maxFallSpeed);
                 }
             }
+
+            anim.SetFloat("VerticalSpeed", rb.velocity.y);
         }
     }
 }

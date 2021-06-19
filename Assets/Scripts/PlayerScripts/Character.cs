@@ -6,6 +6,7 @@ namespace DarcellesUndercroft
     {
         [HideInInspector] public bool IsFacingLeft;
         [HideInInspector] public bool IsGrounded;
+        [HideInInspector] public bool IsCrouching;
 
         protected Collider2D col;
         protected Rigidbody2D rb;
@@ -64,6 +65,11 @@ namespace DarcellesUndercroft
             {
                 return false;
             }
+        }
+
+        protected virtual void FallSpeed(float speed)
+        {
+            rb.velocity = new Vector2(rb.velocity.x, (rb.velocity.y * speed));
         }
     }
 }

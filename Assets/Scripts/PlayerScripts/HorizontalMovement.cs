@@ -9,6 +9,7 @@ namespace DarcellesUndercroft
         [SerializeField] protected float timeTilMaxSpeed;
         [SerializeField] protected float maxSpeed;
         [SerializeField] protected float sprintMultiplier;
+        [SerializeField] protected float crouchSpeedMultiplier;
 
         private float acceleration;
         private float currentSpeed;
@@ -60,7 +61,7 @@ namespace DarcellesUndercroft
         {
             if (MovementPressed())
             {
-                anim.SetBool("Walking", true);
+                anim.SetBool("Moving", true);
                 acceleration = maxSpeed / timeTilMaxSpeed;
                 runTime += Time.deltaTime;
                 currentSpeed = horizontalInput * acceleration * runTime;
@@ -68,11 +69,12 @@ namespace DarcellesUndercroft
             }
             else
             {
-                anim.SetBool("Walking", false);
+                anim.SetBool("Moving", false);
                 acceleration = runTime = currentSpeed = 0;
             }
 
             SpeedMultiplier();
+            anim.SetFloat("CurrentSpeed", currentSpeed);
             rb.velocity = new Vector2(currentSpeed, rb.velocity.y);
         }
 
@@ -111,12 +113,12 @@ namespace DarcellesUndercroft
         {
             if (SprintingHeld())
             {
-                anim.SetBool("Running", true);
                 currentSpeed *= sprintMultiplier;
             }
-            else
+
+            if (character.IsCrouching)
             {
-                anim.SetBool("Running", false);
+                currentSpeed *= crouchSpeedMultiplier;
             }
         }
     }

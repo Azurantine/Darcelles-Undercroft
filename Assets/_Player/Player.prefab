@@ -18,7 +18,7 @@ GameObject:
   - component: {fileID: 3112603146468713831}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -150,6 +150,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   IsFacingLeft: 0
   IsGrounded: 0
+  IsCrouching: 0
 --- !u!114 &3112603146468713833
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -164,9 +165,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   IsFacingLeft: 0
   IsGrounded: 0
+  IsCrouching: 0
   timeTilMaxSpeed: 0.75
   maxSpeed: 6
   sprintMultiplier: 1.6
+  crouchSpeedMultiplier: 0
 --- !u!114 &3112603146468713838
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -181,6 +184,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   IsFacingLeft: 0
   IsGrounded: 0
+  IsCrouching: 0
   limitAirJumps: 1
   maxJumps: 2
   jumpForce: 100
@@ -190,6 +194,8 @@ MonoBehaviour:
   maxJumpSpeed: 10
   maxFallSpeed: -10
   acceptedFallSpeed: -5
+  glideTime: 0
+  gravity: 0
   collisionLayer:
     serializedVersion: 2
     m_Bits: 64
